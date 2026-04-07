@@ -8,10 +8,10 @@ rm -rf windows-build > /dev/null
 mkdir windows-build
 
 echo Build arm64
-dotnet publish -c Release -r win-arm64
+dotnet publish -c Release -r win-arm64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
 
 echo Build amd64
-dotnet publish -c Release -r win-amd64
+dotnet publish -c Release -r win-amd64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
 
 cp bin/Release/net8.0/win-x64/publish/SeverityBeacon.exe windows-build/SeverityBeacon-amd64.exe
 cp bin/Release/net8.0/win-arm64/publish/SeverityBeacon.exe windows-build/SeverityBeacon-arm64.exe
@@ -24,10 +24,10 @@ rm -rf macos-build > /dev/null
 mkdir macos-build
 
 echo Build arm64
-dotnet publish -c Release -r osx-arm64
+dotnet publish -c Release -r osx-arm64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
 
 echo Build amd64
-dotnet publish -c Release -r osx-amd64
+dotnet publish -c Release -r osx-amd64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true
 
 echo Build universal binary
 lipo -create -output macos-build/SeverityBeacon bin/Release/net8.0/osx-arm64/publish/SeverityBeacon bin/Release/net8.0/osx-x64/publish/SeverityBeacon

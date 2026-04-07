@@ -6,17 +6,21 @@ namespace SeverityBeacon
     {
         private CancellationTokenSource? _CancellationToken;
         private readonly int _ClearBeaconAfter;
+        private readonly string? _DeskLampState;
         private readonly string _DefaultState;
         private readonly SerialPort _Port;
+        private readonly Action<string>? _StateChanged;
         private int _BlankAfter;
         private bool _Flashing;
         
         #region Initialisation
-        public TheBeacon(string ComPort, string _defaultState, int clearBeaconAfter)
+        public TheBeacon(string ComPort, string _defaultState, int clearBeaconAfter, string? deskLampState = null, Action<string>? stateChanged = null)
         {
             _Port = new SerialPort(ComPort, 9600);
             _ClearBeaconAfter = clearBeaconAfter;
             _DefaultState = _defaultState;
+            _DeskLampState = deskLampState;
+            _StateChanged = stateChanged;
             _Port.Open();
         }
         
@@ -60,26 +64,32 @@ namespace SeverityBeacon
                 _Flashing = false;
                 _CancellationToken?.Cancel();
                 if( !_Port.IsOpen ) _Port.Open();
-                if( Option == null && (_BlankAfter != _ClearBeaconAfter) )
+                if( Option == null && (_BlankAfter < _ClearBeaconAfter) )
                 {
                     // State has recently changed to "all clear"
-                    //Console.WriteLine($"WR 00 {_HexToByte(_DefaultState)}");
-                    _Port.WriteLine($"WR 00 {_HexToByte(_DefaultState)}");
+                    SetBeaconColour(_DefaultState);
                     _BlankAfter++;
                     return;
                 }
-                else if( Option == null && (_BlankAfter == _ClearBeaconAfter) )
+                else if( Option == null && (_BlankAfter >= _ClearBeaconAfter) )
                 {
-                    // State has been all clear exceeding the intervals, clear the beacon
-                    Console.WriteLine("WR 00 01 01 01");
-                    _Port.WriteLine("WR 00 01 01 01");
+                    // State has been all clear exceeding the intervals, clear the beacon or revert to desk lamp state
+                    if (!string.IsNullOrWhiteSpace(_DeskLampState))
+                    {
+                        SetBeaconColour(_DeskLampState);
+                    }
+                    else
+                    {
+                        SetBeaconColour("#000000");
+                    }
+
+                    _BlankAfter++;
                     return;
                 }
                 
                 // Set state 1
                 _BlankAfter = 0;
-                //Console.WriteLine($"WR 00 {_HexToByte(Option.BeaconHexColourState1)}");
-                _Port.WriteLine($"WR 00 {_HexToByte(Option!.BeaconHexColourState1)}");
+                SetBeaconColour(Option!.BeaconHexColourState1);
                 
                 // Check if we have a second state for flashing
                 if( !string.IsNullOrEmpty(Option.BeaconHexColourState2) && Option.BeaconChangeStateInterval1 != null )
@@ -96,6 +106,13 @@ namespace SeverityBeacon
         #endregion Public Methods
         
         #region Private Methods
+        public void SetBeaconColour(string hexCode)
+        {
+            _Flashing = false;
+            _CancellationToken?.Cancel();
+            WriteBeaconColour(hexCode);
+        }
+
         /// <summary>
         /// Run the flashing task
         /// </summary>
@@ -108,12 +125,10 @@ namespace SeverityBeacon
                 _CancellationToken = new CancellationTokenSource();
                 while( _Flashing && Option.BeaconChangeStateInterval1 != null )
                 {
-                    //Console.WriteLine($"WR 00 {_HexToByte(Option.BeaconHexColourState1)}");
-                    _Port.WriteLine($"WR 00 {_HexToByte(Option.BeaconHexColourState1)}");
+                    WriteBeaconColour(Option.BeaconHexColourState1);
                     await Task.Delay(TimeSpan.FromMilliseconds((int)Option.BeaconChangeStateInterval1), _CancellationToken.Token);
                     
-                    //Console.WriteLine($"WR 00 {_HexToByte(Option.BeaconHexColourState2!)}");
-                    _Port.WriteLine($"WR 00 {_HexToByte(Option.BeaconHexColourState2!)}");
+                    WriteBeaconColour(Option.BeaconHexColourState2!);
                     var StateChangeInterval2 = Option.BeaconChangeStateInterval2 ?? (int)Option.BeaconChangeStateInterval1;
                     await Task.Delay(TimeSpan.FromMilliseconds(StateChangeInterval2), _CancellationToken.Token);
                 }
@@ -144,6 +159,18 @@ namespace SeverityBeacon
             if( hex2 == "00" ) hex2 = "01";
             if( hex3 == "00" ) hex3 = "01";
             return $"{hex1} {hex2} {hex3}";
+        }
+
+        private void WriteBeaconColour(string hexCode)
+        {
+            if (!_Port.IsOpen) _Port.Open();
+            _Port.WriteLine($"WR 00 {_HexToByte(hexCode)}");
+            _StateChanged?.Invoke(NormalizeHexCode(hexCode));
+        }
+
+        private static string NormalizeHexCode(string hexCode)
+        {
+            return hexCode.StartsWith('#') ? hexCode.ToUpperInvariant() : $"#{hexCode.ToUpperInvariant()}";
         }
         #endregion Private Methods
     }

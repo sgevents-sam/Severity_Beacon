@@ -7,7 +7,6 @@ public class HostResults
 
 public class HostResult
 {
-    public string Hostid { get; set; }
-    public string Status { get; set; }
+    public string Hostid { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
 }
-

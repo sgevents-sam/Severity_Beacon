@@ -7,21 +7,20 @@ public class ProblemResults
 
 public class ProblemResult
 {
-    public string Eventid { get; set; }
-    public string Source { get; set; }
-    public string Objectid { get; set; }
-    public string Clock { get; set; }
-    public string Ns { get; set; }
-    public string REventid { get; set; }
-    public string RClock { get; set; }
-    public string RNs { get; set; }
-    public string Correlationid { get; set; }
-    public string Userid { get; set; }
-    public string Name { get; set; }
-    public string Acknowledged { get; set; }
-    public string Severity { get; set; }
-    public string CauseEventid { get; set; }
-    public string Opdata { get; set; }
-    public string Suppressed { get; set; }
+    public string Eventid { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
+    public string Objectid { get; set; } = string.Empty;
+    public string Clock { get; set; } = string.Empty;
+    public string Ns { get; set; } = string.Empty;
+    public string REventid { get; set; } = string.Empty;
+    public string RClock { get; set; } = string.Empty;
+    public string RNs { get; set; } = string.Empty;
+    public string Correlationid { get; set; } = string.Empty;
+    public string Userid { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Acknowledged { get; set; } = string.Empty;
+    public string Severity { get; set; } = string.Empty;
+    public string CauseEventid { get; set; } = string.Empty;
+    public string Opdata { get; set; } = string.Empty;
+    public string Suppressed { get; set; } = string.Empty;
 }
-
