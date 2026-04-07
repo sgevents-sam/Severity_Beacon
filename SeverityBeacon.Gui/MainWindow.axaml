@@ -13,9 +13,9 @@
         Icon="avares://SeverityBeacon.Gui/tray-roundal.png"
         Title="SeverityBeacon">
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-    <Grid RowDefinitions="Auto,*,Auto" Margin="22">
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="22">
       <Border Classes="panel" Padding="20" Margin="0,0,0,16">
-        <Grid ColumnDefinitions="Auto,Auto,Auto,*" RowDefinitions="Auto,Auto">
+        <Grid ColumnDefinitions="Auto,Auto,*,Auto" RowDefinitions="Auto,Auto">
           <Button Classes="header-toggle"
                   Content="{Binding PollingToggleLabel}"
                   Click="TogglePollingClick"
@@ -26,21 +26,27 @@
                   HorizontalAlignment="Left" />
           <Border Grid.Column="1"
                   Margin="14,0,0,0"
-                  Background="#5C2F73"
-                  BorderBrush="#597493"
+                  Background="{Binding StatusBadgeBackground}"
+                  BorderBrush="{Binding StatusBadgeBorderBrush}"
                   BorderThickness="1"
                   CornerRadius="999"
-                  Padding="14,8"
-                  VerticalAlignment="Center">
-            <TextBlock Text="{Binding StatusMessage}" Foreground="#FFF7E8" FontWeight="SemiBold" />
-          </Border>
-          <Button Grid.Column="2"
-                  Margin="14,0,0,0"
-                  Content="Hide GUI"
-                  Click="HideGuiClick"
+                  Padding="22,12"
                   Height="54"
-                  MinWidth="140"
-                  HorizontalAlignment="Left" />
+                  MinWidth="180"
+                  VerticalAlignment="Center">
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="#FFF7E8"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+          </Border>
+          <Image Grid.Column="3"
+                 Width="112"
+                 Height="112"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Center"
+                 Source="avares://SeverityBeacon.Gui/tray-roundal.png"
+                 Stretch="Uniform" />
           <TextBlock Grid.Row="1"
                      Grid.ColumnSpan="4"
                      Margin="0,16,0,0"
@@ -157,161 +163,51 @@
           </StackPanel>
         </Border>
 
-        <Expander Header="Settings" IsExpanded="{Binding IsSettingsOpen}">
-          <Border Classes="panel">
-            <StackPanel Spacing="18">
-              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
-                <TextBlock Margin="0,0,12,12" Text="Profile Name" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <Grid Grid.Column="1" ColumnDefinitions="*,Auto,Auto">
-                  <TextBox Margin="0,0,10,12" Text="{Binding ProfileName}" Watermark="Profile name" />
-                  <Button Grid.Column="1" Margin="0,0,10,12" Content="Save" Click="SaveProfileClick" />
-                  <Button Grid.Column="2" Margin="0,0,0,12" Content="Delete" Click="DeleteProfileClick" />
-                </Grid>
-
-                <TextBlock Grid.Row="1" Margin="0,0,12,12" Text="Zabbix URL" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" Text="{Binding ZabbixUrl}" Watermark="https://zabbix.example.com" />
-
-                <TextBlock Grid.Row="2" Margin="0,0,12,12" Text="API Token" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" Text="{Binding ApiToken}" />
-
-                <TextBlock Grid.Row="3" Margin="0,0,12,12" Text="Query Interval (s)" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <NumericUpDown Grid.Row="3" Grid.Column="1" Margin="0,0,0,12" Minimum="1" Maximum="3600" Value="{Binding QueryIntervalSeconds}" FormatString="N0" />
-
-                <TextBlock Grid.Row="4" Margin="0,0,12,12" Text="Clear After" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <NumericUpDown Grid.Row="4" Grid.Column="1" Margin="0,0,0,12" Minimum="0" Maximum="999" Value="{Binding ClearBeaconAfter}" FormatString="N0" />
-
-                <TextBlock Grid.Row="5" Margin="0,0,12,12" Text="All Clear Hex" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                <Grid Grid.Row="5" Grid.Column="1" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
-                  <TextBox Text="{Binding ZeroProblemsHex}" Watermark="#01FF01" Margin="0,0,10,0" />
-                  <Button Grid.Column="1" Content="Restore" Click="RestoreAllClearClick" />
-                </Grid>
-              </Grid>
-
-              <Border Background="#142033" BorderBrush="#31445F" BorderThickness="1" CornerRadius="12" Padding="14">
-                <StackPanel Spacing="12">
-                  <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,4">
-                    <TextBlock Classes="section-title" Text="Desk Lamp Colour" />
-                    <Button Grid.Column="1" Content="Restore" Click="RestoreDeskLampClick" />
-                  </Grid>
-                  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
-                    <ColorPicker Width="88"
-                                 Height="48"
-                                 Margin="0,0,16,0"
-                                 Color="{Binding DeskLampColor}"
-                                 IsAlphaEnabled="False"
-                                 IsAlphaVisible="False" />
-                    <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
-                      <TextBox Text="{Binding DeskLampHex}" Watermark="#FFFFFF" />
-                      <TextBlock Text="Click the colour swatch to open the picker, or type a hex colour directly." Foreground="#8EB3D9" TextWrapping="Wrap" />
-                    </StackPanel>
-                  </Grid>
-                </StackPanel>
-              </Border>
-
-              <Border Background="#142033" BorderBrush="#31445F" BorderThickness="1" CornerRadius="12" Padding="14">
-                <StackPanel Spacing="12">
-                  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                    <TextBlock Classes="section-title" Text="Targets" />
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                      <Button Content="Refresh Host Groups" Click="RefreshHostGroupsClick" />
-                      <Button Content="Refresh Ports" Click="RefreshPortsClick" />
-                    </StackPanel>
-
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*,Auto,*" Margin="0,12,0,0">
-                      <TextBlock Margin="0,0,12,0" Text="Host Group" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                      <ComboBox Grid.Column="1"
-                                Margin="0,0,12,0"
-                                ItemsSource="{Binding HostGroups}"
-                                SelectedItem="{Binding SelectedHostGroup}">
-                        <ComboBox.ItemTemplate>
-                          <DataTemplate>
-                            <TextBlock Text="{Binding DisplayName}" />
-                          </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                      </ComboBox>
-                      <TextBlock Grid.Column="2" Margin="0,0,12,0" Text="Serial Port" VerticalAlignment="Center" Foreground="#D0D8E2" />
-                      <ComboBox Grid.Column="3" ItemsSource="{Binding SerialPorts}" SelectedItem="{Binding SelectedSerialPort}" />
-                    </Grid>
-                  </Grid>
-                </StackPanel>
-              </Border>
-
-              <Border Background="#142033" BorderBrush="#31445F" BorderThickness="1" CornerRadius="12" Padding="14">
-                <StackPanel Spacing="12">
-                  <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Classes="section-title" Text="Severity Mapping" />
-                    <Button Grid.Column="1" Content="Restore All Colours" Click="RestoreAllColorsClick" />
-                  </Grid>
-                  <Grid ColumnDefinitions="120,*,*,130,130,110" Margin="0,0,0,4">
-                    <TextBlock Text="Severity" Foreground="#B896C8" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="Colour 1" Foreground="#B896C8" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="2" Margin="10,0,0,0" Text="Colour 2" Foreground="#B896C8" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="3" Margin="10,0,0,0" Text="Colour 1 Time" Foreground="#B896C8" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="4" Margin="10,0,0,0" Text="Colour 2 Time" Foreground="#B896C8" FontWeight="SemiBold" />
-                  </Grid>
-                  <ItemsControl ItemsSource="{Binding SeverityRules}">
-                    <ItemsControl.ItemTemplate>
-                      <DataTemplate>
-                        <Border Background="#0E1828" BorderBrush="#31445F" BorderThickness="1" CornerRadius="12" Padding="12" Margin="0,0,0,10">
-                          <Grid ColumnDefinitions="120,*,*,130,130,110">
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFF7E8" />
-                            <TextBox Grid.Column="1" Margin="10,0,0,0" Text="{Binding State1}" Watermark="#FF0000" />
-                            <TextBox Grid.Column="2" Margin="10,0,0,0" Text="{Binding State2}" Watermark="#000000" />
-                            <NumericUpDown Grid.Column="3" Margin="10,0,0,0" Minimum="0" Maximum="600000" Value="{Binding Interval1}" FormatString="N0" />
-                            <NumericUpDown Grid.Column="4" Minimum="0" Maximum="600000" Value="{Binding Interval2}" FormatString="N0" />
-                            <Button Grid.Column="5"
-                                    Margin="10,0,0,0"
-                                    Content="Restore"
-                                    Tag="{Binding Name}"
-                                    Click="RestoreSeverityClick" />
-                          </Grid>
-                        </Border>
-                      </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                  </ItemsControl>
-                </StackPanel>
-              </Border>
-
-              <Border Background="#142033" BorderBrush="#31445F" BorderThickness="1" CornerRadius="12" Padding="0">
-                <Grid RowDefinitions="Auto,*">
-                  <Border Background="#1A2738" Padding="18,16" CornerRadius="12,12,0,0">
-                    <TextBlock Classes="section-title" Text="Live Log" />
-                  </Border>
-                  <TextBox Grid.Row="1"
-                           Margin="18"
-                           Text="{Binding LogText}"
-                           IsReadOnly="True"
-                           AcceptsReturn="True"
-                           TextWrapping="Wrap"
-                           VerticalContentAlignment="Top"
-                           HorizontalContentAlignment="Left"
-                           MinHeight="220" />
-                </Grid>
-              </Border>
-            </StackPanel>
-          </Border>
-        </Expander>
       </StackPanel>
 
-      <Border Grid.Row="2"
+      <Grid Grid.Row="2" Margin="0,16,0,0" ColumnDefinitions="*,Auto,Auto">
+        <Button Grid.Column="1"
+                Classes="header-toggle"
+                Content="Settings"
+                Click="OpenSettingsClick"
+                Height="54"
+                MinWidth="140"
+                HorizontalAlignment="Right" />
+        <Button Grid.Column="2"
+                Margin="14,0,0,0"
+                Classes="header-toggle"
+                Content="Hide GUI"
+                Click="HideGuiClick"
+                Height="54"
+                MinWidth="140"
+                HorizontalAlignment="Right" />
+      </Grid>
+
+      <Border Grid.Row="3"
               Margin="0,16,0,0"
               Padding="12,10"
               Background="#24122F88"
               BorderBrush="#744D88"
               BorderThickness="1"
               CornerRadius="12">
-        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-          <TextBlock Text="Severity Beacon 3.0   Copyright SG Event Services 2026"
+        <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+          <TextBlock Text="Severity Beacon 3.1"
                      Foreground="#D0D8E2"
                      VerticalAlignment="Center" />
-          <Button Grid.Column="1"
+          <TextBlock Grid.Column="1"
+                     Text="© SG Event Services 2026"
+                     Foreground="#D0D8E2"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+          <Button Grid.Column="2"
                   Content="sgeventservices.com"
                   Click="OpenWebsiteClick"
                   Background="Transparent"
                   BorderThickness="0"
                   Foreground="#FFF7E8"
                   FontWeight="SemiBold"
-                  Padding="0" />
+                  Padding="0"
+                  HorizontalAlignment="Right" />
         </Grid>
       </Border>
     </Grid>

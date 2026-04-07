@@ -11,6 +11,7 @@ namespace SeverityBeacon.Gui;
 public partial class MainWindow : Window
 {
     private bool _forceCloseForReopen;
+    private SettingsWindow? _settingsWindow;
 
     public MainWindow() : this(new MainWindowViewModel())
     {
@@ -131,6 +132,19 @@ public partial class MainWindow : Window
     private void HideGuiClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Hide();
+    }
+
+    private void OpenSettingsClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (_settingsWindow == null || !_settingsWindow.IsLoaded)
+        {
+            _settingsWindow = new SettingsWindow(ViewModel);
+            _settingsWindow.Closed += (_, _) => _settingsWindow = null;
+        }
+
+        _settingsWindow.WindowState = WindowState.Normal;
+        _settingsWindow.Show(this);
+        _settingsWindow.Activate();
     }
 
     public void ForceCloseForReopen()

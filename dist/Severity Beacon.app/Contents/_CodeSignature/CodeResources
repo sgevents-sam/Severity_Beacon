@@ -519,19 +519,19 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			ryLLAe4OZ/UGWhdlA8k4Xs8FxfQ=
+			Wxq4YnQtDndvynhRezhNOmMBw20=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"6cf1c9e0988def57e2effd83b959119a8b76cdba" or cdhash H"af22cb01ee0e67f5065a176503c9385ecf05c5f4"</string>
+			<string>cdhash H"d862a980dd1f3068da9bc1e3b03645216736cbef" or cdhash H"5b1ab862742d0e776fca78517b384d3a6301c36d"</string>
 		</dict>
 		<key>MacOS/SeverityBeacon.Gui.pdb</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			HAJlq3A+ime0gbJkk0C7SlNZe2E=
+			vEJvhsopVKuKqpuuR1NbZQunSkU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"25bd19cfc16b766e31c4f6485eaa086ecd38e046" or cdhash H"1c0265ab703e8a67b481b2649340bb4a53597b61"</string>
+			<string>cdhash H"fe169e5696ad948eabe0240533d41e6fbd72f881" or cdhash H"bc426f86ca2954ab8aaa9bae47535b650ba74a45"</string>
 		</dict>
 		<key>MacOS/SeverityBeacon.Gui.runtimeconfig.json</key>
 		<dict>
@@ -555,10 +555,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			E3wY9OiXgVV6W0eJjeJIttIAais=
+			iB5cgdyDS1q8scDTwlYXNntLwb0=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"ba9966e38539d0d824d8b5d8a3d51bc91e511b35" or cdhash H"137c18f4e89781557a5b47898de248b6d2006a2b"</string>
+			<string>cdhash H"a21388f1322ec9a38f084e62c2d090a44e639e8a" or cdhash H"881e5c81dc834b5abcb1c0d3c25617367b4bc1bd"</string>
 		</dict>
 		<key>MacOS/SeverityBeacon.runtimeconfig.json</key>
 		<dict>

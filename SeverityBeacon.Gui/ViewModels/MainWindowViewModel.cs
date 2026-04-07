@@ -188,6 +188,8 @@ public class MainWindowViewModel : ViewModelBase
             {
                 RaisePropertyChanged(nameof(HasActiveOverride));
                 RaisePropertyChanged(nameof(ActiveOverrideDisplay));
+                RaisePropertyChanged(nameof(StatusBadgeBackground));
+                RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
             }
         }
     }
@@ -224,6 +226,8 @@ public class MainWindowViewModel : ViewModelBase
             if (SetProperty(ref _isManualOverrideEnabled, value))
             {
                 RaisePropertyChanged(nameof(IsManualOverrideInactive));
+                RaisePropertyChanged(nameof(StatusBadgeBackground));
+                RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
             }
         }
     }
@@ -251,7 +255,14 @@ public class MainWindowViewModel : ViewModelBase
     public string StatusMessage
     {
         get => _statusMessage;
-        private set => SetProperty(ref _statusMessage, value);
+        private set
+        {
+            if (SetProperty(ref _statusMessage, value))
+            {
+                RaisePropertyChanged(nameof(StatusBadgeBackground));
+                RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
+            }
+        }
     }
 
     public string LogText
@@ -268,11 +279,59 @@ public class MainWindowViewModel : ViewModelBase
             if (SetProperty(ref _lastError, value))
             {
                 RaisePropertyChanged(nameof(HasError));
+                RaisePropertyChanged(nameof(StatusBadgeBackground));
+                RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
             }
         }
     }
 
     public bool HasError => !string.IsNullOrWhiteSpace(LastError);
+
+    public IBrush StatusBadgeBackground
+    {
+        get
+        {
+            if (HasError)
+            {
+                return new SolidColorBrush(Color.Parse("#A63B3B"));
+            }
+
+            if (IsManualOverrideEnabled)
+            {
+                return new SolidColorBrush(CurrentBeaconColor);
+            }
+
+            if (IsRunning)
+            {
+                return new SolidColorBrush(Color.Parse("#1F8F57"));
+            }
+
+            return new SolidColorBrush(Color.Parse("#5C2F73"));
+        }
+    }
+
+    public IBrush StatusBadgeBorderBrush
+    {
+        get
+        {
+            if (HasError)
+            {
+                return new SolidColorBrush(Color.Parse("#E88A8A"));
+            }
+
+            if (IsManualOverrideEnabled)
+            {
+                return new SolidColorBrush(Lighten(CurrentBeaconColor, 0.25));
+            }
+
+            if (IsRunning)
+            {
+                return new SolidColorBrush(Color.Parse("#8CDEB3"));
+            }
+
+            return new SolidColorBrush(Color.Parse("#8E63A5"));
+        }
+    }
 
     public bool IsRunning
     {
@@ -282,6 +341,8 @@ public class MainWindowViewModel : ViewModelBase
             if (SetProperty(ref _isRunning, value))
             {
                 RaisePropertyChanged(nameof(PollingToggleLabel));
+                RaisePropertyChanged(nameof(StatusBadgeBackground));
+                RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
             }
         }
     }
@@ -855,6 +916,8 @@ public class MainWindowViewModel : ViewModelBase
         if (TryParseHexColor(CurrentBeaconHex, out var color))
         {
             CurrentBeaconColor = color;
+            RaisePropertyChanged(nameof(StatusBadgeBackground));
+            RaisePropertyChanged(nameof(StatusBadgeBorderBrush));
         }
     }
 
@@ -902,6 +965,13 @@ public class MainWindowViewModel : ViewModelBase
     private static string ToHex(Color color)
     {
         return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+    }
+
+    private static Color Lighten(Color color, double amount)
+    {
+        byte Blend(byte channel) => (byte)Math.Clamp(channel + ((255 - channel) * amount), 0, 255);
+
+        return Color.FromRgb(Blend(color.R), Blend(color.G), Blend(color.B));
     }
 
     private static Dictionary<string, SeverityOption> CloneDefaultSeverityOptions()
