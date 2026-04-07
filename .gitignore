@@ -176,7 +176,6 @@ AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
-dist/
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
